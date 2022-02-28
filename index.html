@@ -135,7 +135,7 @@
             var cells = []
 
             for (let i = 0; i < board.length; i++) {
-                var row = 200 + ((i % 3) * 100);
+                var row = 100 + ((i % 3) * 100);
                 var col = 200 + (Math.floor(i / 3) * 100);
                 cells.push(this.add.rectangle(row, col, width, width, red).setInteractive());
                 cells[i].on('pointerdown', function () {
@@ -153,11 +153,11 @@
             aiText = this.add.text(32, 420);
             aiText.setText('AI Difficulty:' + aiLevel);
 
-            var offButton = this.add.rectangle(200, 500, 100, 70, pink).setInteractive();
-            var easyButton = this.add.rectangle(320, 500, 100, 70, gray).setInteractive();
-            var hardButton = this.add.rectangle(440, 500, 100, 70, gray).setInteractive();
+            var offButton = this.add.rectangle(100, 500, 100, 70, pink).setInteractive();
+            var easyButton = this.add.rectangle(220, 500, 100, 70, gray).setInteractive();
+            var hardButton = this.add.rectangle(340, 500, 100, 70, gray).setInteractive();
 
-            var startButton = this.add.rectangle(200, 600, 100, 70, green).setInteractive();
+            var startButton = this.add.rectangle(100, 600, 100, 70, green).setInteractive();
 
 
             const clearButtons = () => {
