@@ -34,6 +34,7 @@
         var text;
         var text2;
         var aiText;
+        var aiSpeedText;
 
         function preload() {
             this.load.setBaseURL('http://labs.phaser.io');
@@ -48,6 +49,7 @@
             var board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
             var v2 = 0;
             var aiLevel = "OFF";
+            var aiSpeed = 400;
 
             let checkCompleted = function (board) {
                 let sample = board[0]
@@ -146,16 +148,22 @@
                 });
             }
 
-            timer = this.time.addEvent({ delay: 200, callback: AIloop, loop: true });
+            timer = this.time.addEvent({ delay: aiSpeed, callback: AIloop, loop: true });
             clockTimer = this.time.addEvent({ delay: 50, callback: clock, loop: true });
             text = this.add.text(32, 32);
             text2 = this.add.text(32, 52);
             aiText = this.add.text(32, 420);
             aiText.setText('AI Difficulty:' + aiLevel);
+            aiSpeedText = this.add.text(32, 450);
+            aiSpeedText.setText('AI Speed:' + aiSpeed);
 
-            var offButton = this.add.rectangle(100, 500, 100, 70, pink).setInteractive();
-            var easyButton = this.add.rectangle(220, 500, 100, 70, gray).setInteractive();
-            var hardButton = this.add.rectangle(340, 500, 100, 70, gray).setInteractive();
+            var offButton = this.add.rectangle(100, 500, 100, 30, pink).setInteractive();
+            var easyButton = this.add.rectangle(220, 500, 100, 30, gray).setInteractive();
+            var hardButton = this.add.rectangle(340, 500, 100, 30, gray).setInteractive();
+
+            var slowButton = this.add.rectangle(100, 540, 100, 30, pink).setInteractive();
+            var medButton = this.add.rectangle(220, 540, 100, 30, gray).setInteractive();
+            var fastButton = this.add.rectangle(340, 540, 100, 30, gray).setInteractive();
 
             var startButton = this.add.rectangle(100, 600, 100, 70, green).setInteractive();
 
@@ -165,6 +173,31 @@
                 easyButton.setFillStyle(gray)
                 hardButton.setFillStyle(gray)
             }
+            const clearSpeedButtons = () => {
+                slowButton.setFillStyle(gray)
+                medButton.setFillStyle(gray)
+                fastButton.setFillStyle(gray)
+            }
+
+            slowButton.on('pointerdown', function () {
+                aiSpeed = 500;
+                aiSpeedText.setText('AI Speed:' + aiSpeed);
+                clearSpeedButtons();
+                this.setFillStyle(pink)
+            });
+            medButton.on('pointerdown', function () {
+                aiSpeed = 400;
+                aiSpeedText.setText('AI Speed:' + aiSpeed);
+                clearSpeedButtons();
+                this.setFillStyle(pink)
+            });
+            fastButton.on('pointerdown', function () {
+                aiSpeed = 300;
+                aiSpeedText.setText('AI Speed:' + aiSpeed);
+                clearSpeedButtons();
+                this.setFillStyle(pink)
+            });
+
 
             offButton.on('pointerdown', function () {
                 aiLevel = "OFF";
