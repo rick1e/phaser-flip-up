@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
 </head>
 
@@ -32,6 +33,7 @@
         var clockValue = 0;
         var text;
         var text2;
+        var aiText;
 
         function preload() {
             this.load.setBaseURL('http://labs.phaser.io');
@@ -45,6 +47,7 @@
 
             var board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
             var v2 = 0;
+            var aiLevel = "OFF";
 
             let checkCompleted = function (board) {
                 let sample = board[0]
@@ -63,9 +66,28 @@
             let clock = function () {
 
                 if (!checkCompleted(board)) {
-                    clockValue += 10
+                    clockValue += 50
                     return
                 }
+            }
+
+            let hardAI = function () {
+                let blueIndices = []
+                board.filter((cell, index) => {
+                    if (cell === 1) {
+                        blueIndices.push(index)
+                    }
+                });
+                let blueIndex = Math.floor(Math.random() * blueIndices.length)
+                if (checkCompleted(board)) {
+                    //endGame()
+                    return
+                }
+                if (blueIndices.length > 0) {
+                    let flipIndex = blueIndices[blueIndex]
+                    flip(cells[flipIndex], flipIndex)
+                }
+                console.log(blueIndices)
             }
 
             let AI = function () {
@@ -77,9 +99,37 @@
 
             }
 
+            let startGame = function (cells) {
+                board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                clockValue = 0
+                for (let i = 0; i < board.length; i++) {
+                    cells[i].setFillStyle(red);
+                }
+            }
+
+            let AIloop = function () {
+                switch (aiLevel) {
+                    case "OFF":
+                        return;
+                        break;
+                    case "EASY":
+                        AI();
+                        break;
+                    case "HARD":
+                        hardAI()
+                        break;
+
+                }
+
+            }
+
             this.add.image(400, 300, 'sky');
             var red = 0xD1495B;
             var blue = 0x004385;
+            var pink = 0xff33ff;
+            var gray = 0x333333;
+            var green = 0x00FF00;
+
             var width = 95;
 
             var cells = []
@@ -96,16 +146,56 @@
                 });
             }
 
-            timer = this.time.addEvent({ delay: 1000, callback: AI, loop: true });
-            clockTimer = this.time.addEvent({ delay: 10, callback: clock, loop: true });
+            timer = this.time.addEvent({ delay: 1000, callback: AIloop, loop: true });
+            clockTimer = this.time.addEvent({ delay: 50, callback: clock, loop: true });
             text = this.add.text(32, 32);
             text2 = this.add.text(32, 52);
+            aiText = this.add.text(32, 420);
+            aiText.setText('AI Difficulty:' + aiLevel);
+
+            var offButton = this.add.rectangle(200, 500, 100, 70, pink).setInteractive();
+            var easyButton = this.add.rectangle(320, 500, 100, 70, gray).setInteractive();
+            var hardButton = this.add.rectangle(440, 500, 100, 70, gray).setInteractive();
+
+            var startButton = this.add.rectangle(200, 600, 100, 70, green).setInteractive();
+
+
+            const clearButtons = () => {
+                offButton.setFillStyle(gray)
+                easyButton.setFillStyle(gray)
+                hardButton.setFillStyle(gray)
+            }
+
+            offButton.on('pointerdown', function () {
+                aiLevel = "OFF";
+                aiText.setText('AI Difficulty:' + aiLevel);
+                clearButtons();
+                this.setFillStyle(pink)
+            });
+            easyButton.on('pointerdown', function () {
+                aiLevel = "EASY";
+                aiText.setText('AI Difficulty:' + aiLevel);
+                clearButtons();
+                this.setFillStyle(pink)
+            });
+            hardButton.on('pointerdown', function () {
+                aiLevel = "HARD";
+                aiText.setText('AI Difficulty:' + aiLevel);
+                clearButtons();
+                this.setFillStyle(pink)
+            });
+
+            startButton.on('pointerdown', function () {
+                startGame(cells)
+            });
+
 
         }
 
         function update(time, delta) {
             text.setText('Event.progress: ' + timer.getProgress().toString());
             text2.setText('Time: ' + time + '\nCurrent Game: ' + (clockValue) + '\nDelta: ' + delta);
+
         }
 
     </script>
