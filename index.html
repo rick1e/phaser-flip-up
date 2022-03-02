@@ -11,8 +11,9 @@
     <script>
         var config = {
             type: Phaser.AUTO,
-            width: 800,
-            height: 600,
+            width: 400,
+            height: 700,
+            backgroundColor: '#4488aa',
             physics: {
                 default: 'arcade',
                 arcade: {
@@ -37,11 +38,11 @@
         var aiSpeedText;
 
         function preload() {
-            this.load.setBaseURL('http://labs.phaser.io');
+            //this.load.setBaseURL('http://labs.phaser.io');
 
-            this.load.image('sky', 'assets/skies/space3.png');
-            this.load.image('logo', 'assets/sprites/phaser3-logo.png');
-            this.load.image('red', 'assets/particles/red.png');
+            //this.load.image('sky', 'assets/skies/space3.png');
+            //this.load.image('logo', 'assets/sprites/phaser3-logo.png');
+            //this.load.image('red', 'assets/particles/red.png');
         }
 
         function create() {
@@ -83,6 +84,10 @@
                 let blueIndex = Math.floor(Math.random() * blueIndices.length)
                 if (checkCompleted(board)) {
                     //endGame()
+                    if (timer) {
+                        //timer.destroy()
+                        timer.reset({ delay: aiSpeed, callback: AIloop, loop: true, paused: true });
+                    }
                     return
                 }
                 if (blueIndices.length > 0) {
@@ -98,6 +103,12 @@
                     var index = Phaser.Math.Between(0, board.length - 1)
                     flip(cells[index], index)
                 }
+                else {
+                    if (timer) {
+                        //timer.destroy()
+                        timer.reset({ delay: aiSpeed, callback: AIloop, loop: true, paused: true });
+                    }
+                }
 
             }
 
@@ -110,6 +121,7 @@
             }
 
             let AIloop = function () {
+                console.log("looping", timer.delay, " paused ", timer.paused)
                 switch (aiLevel) {
                     case "OFF":
                         return;
@@ -125,12 +137,24 @@
 
             }
 
-            this.add.image(400, 300, 'sky');
+            let startAI = function () {
+                //timer =
+                if (aiLevel != "OFF") {
+                    timer.reset({ delay: aiSpeed, callback: AIloop, loop: true });
+                }
+                //this.time.addEvent({ delay: aiSpeed, callback: AIloop, loop: true });
+            }
+
+            let createButtonText = function (game, x, y, width, height, text) {
+                game.add.text(0, 0, text, { align: 'center', boundsAlignH: "center", boundsAlignV: "middle" }).setPosition(x - width / 4, y - height / 4);
+            }
+
+            //this.add.image(400, 300, 'sky');
             var red = 0xD1495B;
             var blue = 0x004385;
             var pink = 0xff33ff;
             var gray = 0x333333;
-            var green = 0x00FF00;
+            var green = 0x1E5C28;
 
             var width = 95;
 
@@ -141,14 +165,17 @@
                 var col = 200 + (Math.floor(i / 3) * 100);
                 cells.push(this.add.rectangle(row, col, width, width, red).setInteractive());
                 cells[i].on('pointerdown', function () {
+                    if (checkCompleted(board) && board[0] == 1) {
+                        return
+                    }
                     if (checkCompleted(board)) {
                         clockValue = 0
+                        startAI()
                     }
                     flip(this, i)
                 });
             }
-
-            timer = this.time.addEvent({ delay: aiSpeed, callback: AIloop, loop: true });
+            timer = this.time.addEvent({ delay: aiSpeed, callback: AIloop, loop: true, paused: true });
             clockTimer = this.time.addEvent({ delay: 50, callback: clock, loop: true });
             text = this.add.text(32, 32);
             text2 = this.add.text(32, 52);
@@ -158,14 +185,22 @@
             aiSpeedText.setText('AI Speed:' + aiSpeed);
 
             var offButton = this.add.rectangle(100, 500, 100, 30, pink).setInteractive();
+            createButtonText(this, 100, 500, 100, 30, "OFF");
             var easyButton = this.add.rectangle(220, 500, 100, 30, gray).setInteractive();
+            createButtonText(this, 220, 500, 100, 30, "EASY");
             var hardButton = this.add.rectangle(340, 500, 100, 30, gray).setInteractive();
+            createButtonText(this, 340, 500, 100, 30, "HARD");
+
 
             var slowButton = this.add.rectangle(100, 540, 100, 30, pink).setInteractive();
+            createButtonText(this, 100, 540, 100, 30, "500ms");
             var medButton = this.add.rectangle(220, 540, 100, 30, gray).setInteractive();
+            createButtonText(this, 220, 540, 100, 30, "400ms");
             var fastButton = this.add.rectangle(340, 540, 100, 30, gray).setInteractive();
+            createButtonText(this, 340, 540, 100, 30, "300ms");
 
-            var startButton = this.add.rectangle(100, 600, 100, 70, green).setInteractive();
+            var startButton = this.add.rectangle(100, 600, 100, 40, green).setInteractive();
+            createButtonText(this, 100, 600, 100, 40, "RESET");
 
 
             const clearButtons = () => {
@@ -181,18 +216,21 @@
 
             slowButton.on('pointerdown', function () {
                 aiSpeed = 500;
+                //timer.reset({ delay: aiSpeed, callback: AIloop, loop: true });
                 aiSpeedText.setText('AI Speed:' + aiSpeed);
                 clearSpeedButtons();
                 this.setFillStyle(pink)
             });
             medButton.on('pointerdown', function () {
                 aiSpeed = 400;
+                //timer.reset({ delay: aiSpeed, callback: AIloop, loop: true });
                 aiSpeedText.setText('AI Speed:' + aiSpeed);
                 clearSpeedButtons();
                 this.setFillStyle(pink)
             });
             fastButton.on('pointerdown', function () {
                 aiSpeed = 300;
+                //timer.reset({ delay: aiSpeed, callback: AIloop, loop: true });
                 aiSpeedText.setText('AI Speed:' + aiSpeed);
                 clearSpeedButtons();
                 this.setFillStyle(pink)
@@ -226,8 +264,7 @@
         }
 
         function update(time, delta) {
-            text.setText('Event.progress: ' + timer.getProgress().toString());
-            text2.setText('Time: ' + time + '\nCurrent Game: ' + (clockValue) + '\nDelta: ' + delta);
+            text.setText('Flip up \nTurn all the tiles BLUE \nClick any tile to start \n\nCurrent Game: ' + (clockValue));
 
         }
 
