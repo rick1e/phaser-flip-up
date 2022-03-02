@@ -166,6 +166,7 @@
                 cells.push(this.add.rectangle(row, col, width, width, red).setInteractive());
                 cells[i].on('pointerdown', function () {
                     if (checkCompleted(board) && board[0] == 1) {
+                        startGame(cells)
                         return
                     }
                     if (checkCompleted(board)) {
@@ -199,8 +200,8 @@
             var fastButton = this.add.rectangle(340, 540, 100, 30, gray).setInteractive();
             createButtonText(this, 340, 540, 100, 30, "300ms");
 
-            var startButton = this.add.rectangle(100, 600, 100, 40, green).setInteractive();
-            createButtonText(this, 100, 600, 100, 40, "RESET");
+            //var startButton = this.add.rectangle(100, 600, 100, 40, green).setInteractive();
+            //createButtonText(this, 100, 600, 100, 40, "RESET");
 
 
             const clearButtons = () => {
@@ -256,9 +257,9 @@
                 this.setFillStyle(pink)
             });
 
-            startButton.on('pointerdown', function () {
-                startGame(cells)
-            });
+            //startButton.on('pointerdown', function () {
+            //    startGame(cells)
+            //});
 
 
         }
