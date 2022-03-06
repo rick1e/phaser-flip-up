@@ -9,10 +9,14 @@
 <body>
 
     <script>
+        const width = 400
+        const height = 700
+        const fontSize = 10
+
         var config = {
-            type: Phaser.AUTO,
-            width: 400,
-            height: 700,
+            type: Phaser.CANVAS,
+            width: width,
+            height: height,
             backgroundColor: '#4488aa',
             physics: {
                 default: 'arcade',
@@ -26,7 +30,9 @@
                 update: update
             },
             scale: {
-                zoom: 1 / window.devicePixelRatio
+                //zoom: 4//1 / window.devicePixelRatio,
+                //width: width * window.devicePixelRatio,
+                //height: height * window.devicePixelRatio
             }
         };
 
@@ -149,7 +155,7 @@
             }
 
             let createButtonText = function (game, x, y, width, height, text) {
-                game.add.text(0, 0, text, { align: 'center', boundsAlignH: "center", boundsAlignV: "middle" }).setPosition(x - width / 4, y - height / 4);
+                game.add.text(0, 0, text, { align: 'center', boundsAlignH: "center", boundsAlignV: "middle", fontSize: fontSize * window.devicePixelRatio }).setPosition(x - width / 4, y - height / 4);
             }
 
             //this.add.image(400, 300, 'sky');
@@ -181,9 +187,9 @@
             }
             timer = this.time.addEvent({ delay: aiSpeed, callback: AIloop, loop: true, paused: true });
             clockTimer = this.time.addEvent({ delay: 50, callback: clock, loop: true });
-            text = this.add.text(32, 32);
-            text2 = this.add.text(32, 52);
-            aiText = this.add.text(32, 420);
+            text = this.add.text(32, 32, "", { fontSize: fontSize * window.devicePixelRatio });
+            text2 = this.add.text(32, 52, "", { fontSize: fontSize * window.devicePixelRatio });
+            aiText = this.add.text(32, 420, "", { fontSize: fontSize * window.devicePixelRatio });
             aiText.setText('AI Difficulty:' + aiLevel);
             aiSpeedText = this.add.text(32, 450);
             aiSpeedText.setText('AI Speed:' + aiSpeed);
