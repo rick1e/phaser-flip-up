@@ -14,7 +14,7 @@
         const fontSize = 10
 
         var config = {
-            type: Phaser.CANVAS,
+            type: Phaser.AUTO,
             width: width,
             height: height,
             backgroundColor: '#4488aa',
@@ -274,7 +274,7 @@
         }
 
         function update(time, delta) {
-            text.setText('Flip up \nTurn all the tiles BLUE \nClick any tile to start \n\nCurrent Game: ' + (clockValue));
+            text.setText('Width' + (window.innerWidth) + '\nFlip up v0.0.2\nTurn all the tiles BLUE \nClick any tile to start \n\nCurrent Game: ' + (clockValue));
 
         }
 
